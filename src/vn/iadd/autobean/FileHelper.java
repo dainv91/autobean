@@ -47,7 +47,7 @@ public class FileHelper {
 				+ "Bean";
 		StringBuilder sb = new StringBuilder();
 		sb.append("public class " + fileName + " {\n");
-		sb.append("\tpublic static final String TABLE_NAME = " + table.toUpperCase() + ";\n");
+		sb.append("\tpublic static final String TABLE_NAME = \"" + table.toUpperCase() + "\";\n");
 		for (Column c : columns) {
 			String type = null;
 			if (!DbProvider.getListType().containsKey(c.getType())) {
