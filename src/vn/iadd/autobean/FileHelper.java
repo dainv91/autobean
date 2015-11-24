@@ -64,7 +64,7 @@ public class FileHelper {
 	}
 
 	public static void writeBeanFile(String table, Column[] columns) {
-		String fileName = Character.toUpperCase(table.charAt(0)) + removeUnderscore(table.toLowerCase().substring(1));
+		String fileName = Character.toUpperCase(table.charAt(0)) + removeUnderscore(table.toLowerCase().substring(1))+ "Bean";
 		writeToFile(fileName + ".java", process(table, columns));
 	}
 
