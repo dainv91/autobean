@@ -12,6 +12,11 @@
 		<format property="NOW" pattern="yyyy-MM-dd HH:mm:ss" locale="vi,VN" />
 	</tstamp>
 
+	<target name="compile">
+		<mkdir dir="bin"/>
+		<javac srcdir="src" destdir="bin"/>
+	</target>
+	
 	<target name="jar" depends="build, copy-dependencies">
 		<jar destfile="${output_dir}/${file_name}">
 			<manifest>
@@ -46,7 +51,7 @@
 		</jar>
 	</target>
 
-	<target name="build" depends="init">
+	<target name="build" depends="init,compile">
 	</target>
 
 </project>
