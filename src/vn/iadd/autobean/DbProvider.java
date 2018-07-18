@@ -21,7 +21,8 @@ public class DbProvider {
 		if (getDbType() == DbProvider.DatabaseType.ORACLE) {
 			driver = "oracle.jdbc.driver.OracleDriver";
 		} else if (getDbType() == DbProvider.DatabaseType.MYSQL) {
-			driver = "com.mysql.jdbc.Driver";
+			//driver = "com.mysql.jdbc.Driver";
+			driver = "com.mysql.cj.jdbc.Driver";
 		} else {
 			driver = "Not implemented";
 		}
@@ -38,6 +39,7 @@ public class DbProvider {
 
 	public void setDbType(DatabaseType dbType) {
 		this.dbType = dbType;
+		setDriver();
 	}
 
 	public String getHost() {
@@ -136,11 +138,15 @@ public class DbProvider {
 	private static Map<String, String> lstType = new HashMap<String, String>();
 
 	static {
+		// Oracle
 		lstType.put("NUMBER", "int");
 		lstType.put("VARCHAR2", "String");
 		lstType.put("VARCHAR", "String");
 		lstType.put("DATE", "java.util.Date");
 		lstType.put("CHAR", "String");
+		
+		// Mysql
+		lstType.put("DECIMAL", "int");
 	}
 
 	public static Map<String, String> getListType() {

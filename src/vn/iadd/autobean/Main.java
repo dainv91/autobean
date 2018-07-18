@@ -17,6 +17,7 @@ public class Main {
 	private static String host = null;
 	private static String username = null;
 	private static String passwd = null;
+	private static String dbType = null;
 
 	static {
 		lstOptions.put(Const.OPTION_TABLE_NAME, "--table-name");
@@ -27,15 +28,17 @@ public class Main {
 		lstOptions.put(Const.OPTION_CONFIG_FILE, "--config-file");
 		lstOptions.put(Const.OPTION_HELP_2, "--help");
 		lstOptions.put(Const.OPTION_HELP_1, "--help");
+		lstOptions.put(Const.OPTION_DB_TYPE, "--db-type");
 
 		lstUsage.put(Const.OPTION_TABLE_NAME, "table name in database.");
 		lstUsage.put(Const.OPTION_FILE_NAME, "file name.java.");
-		lstUsage.put(Const.OPTION_HOST_NAME, "ip of database. Ex: jdbc:oracle:thin:@<IP>:<PORT>:<SID>");
+		lstUsage.put(Const.OPTION_HOST_NAME, "ip of database. Ex: jdbc:oracle:thin:@<IP>:<PORT>:<SID> / jdbc:mysql://<IP>:<PORT>/<DB>?autoReconnect=true&useSSL=false");
 		lstUsage.put(Const.OPTION_USER_NAME, "user name.");
 		lstUsage.put(Const.OPTION_PASSWD, "password.");
 		lstUsage.put(Const.OPTION_CONFIG_FILE, "config file. Default is " + Const.CONFIG_FILE);
 		lstUsage.put(Const.OPTION_HELP_2, "list option.");
 		lstUsage.put(Const.OPTION_HELP_1, "list option.");
+		lstUsage.put(Const.OPTION_DB_TYPE, "database type: "+ DbProvider.DatabaseType.ORACLE + "/" + DbProvider.DatabaseType.MYSQL + ". Default is " + DbProvider.DatabaseType.ORACLE);
 	}
 
 	public static void main(String[] args) {
@@ -86,10 +89,18 @@ public class Main {
 		readFromEnv(params);
 		writeConfigFile(configFile);
 
+		try {
+			DbProvider.DatabaseType dType = DbProvider.DatabaseType.valueOf(dbType);
+			db.setDbType(dType);
+		} catch (Exception ex) {
+			//ex.printStackTrace();
+		}
+		
 		db.setHost(host);
 		db.setUsername(username);
 		db.setPassword(passwd);
 
+		
 		columns = db.getColumns(tableName);
 		if (!params.containsKey(Const.OPTION_VERBOSE_FILE_NAME)) {
 			FileHelper.writeBeanFile(tableName, columns);
@@ -108,6 +119,9 @@ public class Main {
 		}
 		if (params.containsKey(Const.OPTION_VERBOSE_PASSWD)) {
 			passwd = params.get(Const.OPTION_VERBOSE_PASSWD);
+		}
+		if (params.containsKey(Const.OPTION_VERBOSE_DB_TYPE)) {
+			dbType = params.get(Const.OPTION_VERBOSE_DB_TYPE);
 		}
 	}
 
@@ -155,6 +169,8 @@ public class Main {
 					? FileHelper.getProperty(configFile, Const.CONFIG_USER_NAME) : Const.DEFAULT_USER;
 			passwd = FileHelper.getProperty(configFile, Const.CONFIG_PASSWD) != null
 					? FileHelper.getProperty(configFile, Const.CONFIG_PASSWD) : Const.DEFAULT_PASS;
+			dbType = FileHelper.getProperty(configFile, Const.CONFIG_DB_TYPE) != null
+					? FileHelper.getProperty(configFile, Const.CONFIG_DB_TYPE) : Const.DEFAULT_DB_TYPE;
 		}
 	}
 
@@ -164,6 +180,7 @@ public class Main {
 		properties.put(Const.CONFIG_HOST, host);
 		properties.put(Const.CONFIG_USER_NAME, username);
 		properties.put(Const.CONFIG_PASSWD, passwd);
+		properties.put(Const.CONFIG_DB_TYPE, dbType);
 		FileHelper.addProperty(configFile, properties);
 
 	}
