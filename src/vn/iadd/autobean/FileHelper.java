@@ -9,12 +9,27 @@ import java.io.OutputStream;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.Set;;
+import java.util.Set;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 public class FileHelper {
 
 	private static Properties prop = new Properties();
 
+	public static String toDateNow(String fmt) {
+		Date current = Calendar.getInstance().getTime();
+		SimpleDateFormat df = null;
+		df = new SimpleDateFormat(fmt);
+		return df.format(current);
+	}
+	
+	public static String toDateNow() {
+		return toDateNow("yyyy-MM-dd HH:mm:ss");
+	}
+	
 	public static void writeToFile(String fileName, String content) {
 		java.io.FileWriter fw = null;
 		java.io.BufferedWriter bw = null;
@@ -43,10 +58,19 @@ public class FileHelper {
 	}
 
 	public static String process(String table, Column[] columns) {
+		final String now = toDateNow();
 		String fileName = Character.toUpperCase(table.charAt(0)) + removeUnderscore(table.toLowerCase().substring(1))
 				+ "Bean";
 		StringBuilder sb = new StringBuilder();
-		sb.append("public class " + fileName + " {\n");
+		sb.append("import java.io.Serializable;\n");
+		sb.append("\n");
+		sb.append("/**\n");
+		sb.append(" * @author DaiNV\n");
+		sb.append(" * @since ").append(now).append("\n");
+		sb.append(" *\n");
+		sb.append(" */\n");
+		sb.append("\n");
+		sb.append("public class " + fileName + " implements Serializable {\n");
 		sb.append("\tpublic static final String TABLE_NAME = \"" + table.toUpperCase() + "\";\n");
 		for (Column c : columns) {
 			String type = null;
