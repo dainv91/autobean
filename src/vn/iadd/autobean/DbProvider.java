@@ -23,6 +23,8 @@ public class DbProvider {
 		} else if (getDbType() == DbProvider.DatabaseType.MYSQL) {
 			//driver = "com.mysql.jdbc.Driver";
 			driver = "com.mysql.cj.jdbc.Driver";
+		} else if (getDbType() == DbProvider.DatabaseType.MSSQL) {
+			driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 		} else {
 			driver = "Not implemented";
 		}
@@ -96,7 +98,9 @@ public class DbProvider {
 			columns = new String[columnCount];
 			lstColumns = new Column[columnCount];
 			for (int i = 0; i < columnCount; i++) {
-				Column c = new Column(rsmd.getColumnName(i + 1), rsmd.getColumnTypeName(i + 1),
+				final String cName = rsmd.getColumnName(i + 1);
+				final String cType = rsmd.getColumnTypeName(i + 1).toUpperCase();
+				Column c = new Column(cName, cType,
 						rsmd.getColumnDisplaySize(i + 1));
 				columns[i] = rsmd.getColumnName(i + 1);
 				lstColumns[i] = c;
@@ -132,7 +136,7 @@ public class DbProvider {
 	}
 
 	public static enum DatabaseType {
-		ORACLE, MYSQL
+		ORACLE, MYSQL, MSSQL
 	}
 
 	private static Map<String, String> lstType = new HashMap<String, String>();
@@ -147,6 +151,12 @@ public class DbProvider {
 		
 		// Mysql
 		lstType.put("DECIMAL", "int");
+		
+		// SQL Server
+		lstType.put("NVARCHAR", "String");
+		lstType.put("DATETIME", "java.sql.Timestamp");
+		lstType.put("BIT", "Boolean");
+		lstType.put("INT", "int");
 	}
 
 	public static Map<String, String> getListType() {
